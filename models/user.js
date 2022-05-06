@@ -21,12 +21,15 @@ const userSchema = new Schema({
             measure: { type: String },
             quantity: { type: Number },
             text: { type: String },
-            weight: { type: Number },
-          },
-        ],
-      },
-    ],
+            weight: { type: Number }
+          }
+        ]
+      }
+    ]
   },
+  favorites: [
+    { type: mongoose.Types.ObjectId, required: true, ref: 'Favorite' }
+  ]
 });
 
 userSchema.plugin(uniqueValidator);

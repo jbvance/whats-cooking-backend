@@ -14,7 +14,7 @@ router.post(
     check('email').normalizeEmail().isEmail().withMessage('not a valid email'),
     check('password')
       .isLength({ min: 8 })
-      .withMessage('must be at least 8 characters'),
+      .withMessage('must be at least 8 characters')
   ],
   usersController.signup
 );
