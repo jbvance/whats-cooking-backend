@@ -4,8 +4,53 @@ const Favorite = require('../models/favorite');
 const mongoose = require('mongoose');
 //const { request } = require('http');
 
+/********************************
+ * GET FAVORITES
+ *******************************/
 const getFavorites = async (req, res, next) => {
-  return res.status(200).json({ data: {} });
+  // check for an existing user
+  let user;
+  try {
+    user = await User.findById(req.userData.userId);
+  } catch (err) {
+    const error = new HttpError(
+      'Creating favorite failed, please try again.',
+      500
+    );
+    return next(error);
+  }
+
+  if (!user) {
+    const error = new HttpError('Could not find user for provided id.', 404);
+    return next(error);
+  }
+  let userWithFavorites;
+  try {
+    userWithFavorites = await User.findById(req.userData.userId).populate(
+      'favorites'
+    );
+  } catch (err) {
+    console.log(err);
+    const error = new HttpError('Error finding favorites for user id', 500);
+    return next(error);
+  }
+
+  if (
+    !userWithFavorites ||
+    !userWithFavorites.favorites ||
+    userWithFavorites.favorites.length === 0
+  ) {
+    const error = new HttpError(
+      'Could not find any favorites for the provided user id',
+      404
+    );
+    return next(error);
+  }
+  res.json({
+    favorites: userWithFavorites.favorites.map((fav) =>
+      fav.toObject({ getters: true })
+    ),
+  });
 };
 
 /***********************************************
@@ -13,13 +58,12 @@ const getFavorites = async (req, res, next) => {
  **********************************************/
 const createFavorite = async (req, res, next) => {
   const recipe = req.body;
+  console.log('BODY', req.body);
 
   const createdFavorite = new Favorite({
     ...recipe,
-    creator: req.userData.userId // this is added in checkAuth middleware
+    creator: req.userData.userId, // this is added in checkAuth middleware
   });
-
-  //return res.status(201).json({ data: createdFavorite });
 
   // check for an existing user
   let user;
@@ -56,9 +100,7 @@ const createFavorite = async (req, res, next) => {
   }
 
   // created successfully
-  res
-    .status(201)
-    .json({ favorite: createdFavorite.toObject({ getters: true }) });
+  res.status(201).json({ data: createdFavorite.toObject({ getters: true }) });
 };
 
 exports.getFavorites = getFavorites;
