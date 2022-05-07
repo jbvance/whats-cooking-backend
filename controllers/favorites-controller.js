@@ -58,8 +58,6 @@ const getFavorites = async (req, res, next) => {
  **********************************************/
 const createFavorite = async (req, res, next) => {
   const recipe = req.body;
-  console.log('BODY', req.body);
-
   const createdFavorite = new Favorite({
     ...recipe,
     creator: req.userData.userId, // this is added in checkAuth middleware
@@ -103,5 +101,50 @@ const createFavorite = async (req, res, next) => {
   res.status(201).json({ data: createdFavorite.toObject({ getters: true }) });
 };
 
+/*******************************
+ * DELETE A FAVORITE
+ *******************************/
+const deleteFavorite = async (req, res, next) => {
+  const { fid } = req.params;
+  let favorite;
+
+  try {
+    favorite = await Favorite.findById(fid).populate('creator');
+  } catch (err) {
+    const error = new HttpError('Error finding favorite id for deletion', 500);
+    return next(error);
+  }
+
+  //Check whether the favorite exists
+  if (!favorite) {
+    const error = new HttpError(`Could not find favorite with id: ${fid}`, 404);
+    return next(error);
+  }
+
+  if (favorite.creator.id !== req.userData.userId) {
+    const error = new HttpError(
+      'You are not allowed to delete this favorite',
+      403
+    );
+    return next(error);
+  }
+
+  try {
+    const sess = await mongoose.startSession();
+    sess.startTransaction();
+    await favorite.remove({ session: sess });
+    favorite.creator.favorites.pull(favorite);
+    await favorite.creator.save({ session: sess });
+    await sess.commitTransaction({ session: sess });
+  } catch (err) {
+    const error = new HttpError(`Error deleting favorite with id: ${fid}`, 500);
+    console.log(err);
+    return next(error);
+  }
+
+  res.status(200).json({ message: 'Deleted favorite' });
+};
+
 exports.getFavorites = getFavorites;
 exports.createFavorite = createFavorite;
+exports.deleteFavorite = deleteFavorite;

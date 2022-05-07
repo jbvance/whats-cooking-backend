@@ -19,6 +19,11 @@ router.post(
   ],
   favoritesController.createFavorite
 );
+router.delete(
+  '/:fid',
+  [check('fid').not().isEmpty().withMessage('cannot be empty')],
+  favoritesController.deleteFavorite
+);
 
 // router.get('/user/:uid', placesController.getPlacesByUserId);
 
