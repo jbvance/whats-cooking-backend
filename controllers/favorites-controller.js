@@ -59,7 +59,7 @@ const getFavorites = async (req, res, next) => {
 const createFavorite = async (req, res, next) => {
   const recipe = req.body;
   const createdFavorite = new Favorite({
-    ...recipe,
+    ...req.body,
     creator: req.userData.userId, // this is added in checkAuth middleware
   });
 
@@ -84,7 +84,7 @@ const createFavorite = async (req, res, next) => {
     // use a session and transaction to roll back in case one of the operations fails
     const sess = await mongoose.startSession();
     sess.startTransaction();
-    await createdFavorite.save({ session: sess });
+    await createdFavorite.save({ session: sess, checkKeys: false });
     user.favorites.push(createdFavorite);
     await user.save({ session: sess });
     await sess.commitTransaction();
