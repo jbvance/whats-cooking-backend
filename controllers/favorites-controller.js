@@ -2,6 +2,7 @@ const HttpError = require('../models/http-error');
 const User = require('../models/user');
 const Favorite = require('../models/favorite');
 const mongoose = require('mongoose');
+const { createImgurImage } = require('../util/imgur');
 //const { request } = require('http');
 
 /********************************
@@ -49,7 +50,7 @@ const getFavorites = async (req, res, next) => {
   res.json({
     favorites: userWithFavorites.favorites.map((fav) =>
       fav.toObject({ getters: true })
-    ),
+    )
   });
 };
 
@@ -58,9 +59,11 @@ const getFavorites = async (req, res, next) => {
  **********************************************/
 const createFavorite = async (req, res, next) => {
   const recipe = req.body;
+  const newImageUrl = await createImgurImage(recipe.image);
   const createdFavorite = new Favorite({
     ...req.body,
-    creator: req.userData.userId, // this is added in checkAuth middleware
+    image: newImageUrl,
+    creator: req.userData.userId // this is added in checkAuth middleware
   });
 
   // check for an existing user

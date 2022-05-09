@@ -15,7 +15,7 @@ router.post(
   [
     check('id').not().isEmpty().withMessage('cannot be empty'),
     check('label').not().isEmpty().withMessage('cannot be empty'),
-    check('ingredients').isArray(),
+    check('ingredients').isArray()
   ],
   favoritesController.createFavorite
 );
