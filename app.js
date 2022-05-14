@@ -33,6 +33,10 @@ app.use('/api/users', usersRoutes);
 app.use('/api/shopping-list', shoppingListRoutes);
 app.use('/api/favorites', favoritesRoutes);
 
+app.use('/healthcheck', (req, res, next) => {
+  res.status(200).json({ message: 'Health Check Succeeded' });
+});
+
 app.use((req, res, next) => {
   const error = new HttpError('Could not find this route', 404);
   next(error);

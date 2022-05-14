@@ -15,3 +15,4 @@ jobs:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: 'whats-cooking-backend.herokuapp.com' #Must be unique in Heroku
           heroku_email: 'jbvance@gmail.com'
+          healthcheck: 'https://whats-cooking-backend.herokuapp.com/healthcheck'
