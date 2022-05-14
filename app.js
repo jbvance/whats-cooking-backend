@@ -35,7 +35,7 @@ app.use('/api/favorites', favoritesRoutes);
 
 // Health check url for github actions
 app.use('/healthcheck', (req, res, next) => {
-  res.status(200).json({ message: 'Health Check call succeeded!' });
+  res.status(200).json({ message: 'Health Check call successful!' });
 });
 
 app.use((req, res, next) => {
