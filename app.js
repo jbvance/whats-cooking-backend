@@ -33,8 +33,9 @@ app.use('/api/users', usersRoutes);
 app.use('/api/shopping-list', shoppingListRoutes);
 app.use('/api/favorites', favoritesRoutes);
 
+// Health check url for github actions
 app.use('/healthcheck', (req, res, next) => {
-  res.status(200).json({ message: 'Health Check Succeeded' });
+  res.status(200).json({ message: 'Health Check call succeeded!' });
 });
 
 app.use((req, res, next) => {
