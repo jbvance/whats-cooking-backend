@@ -5,6 +5,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 require('dotenv').config();
 const mongoose = require('mongoose');
+const PORT = process.env.PORT || 5000;
 
 //const placesRoutes = require('./routes/places-routes');
 const usersRoutes = require('./routes/users-routes');
@@ -49,7 +50,7 @@ mongoose
   .connect(process.env.DB_URL)
   .then(() => {
     console.log('Connected to Database successfully');
-    app.listen(5000, () => {
+    app.listen(PORT, () => {
       console.log('Listening on Port 5000');
     });
   })
