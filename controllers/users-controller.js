@@ -151,7 +151,7 @@ const login = async (req, res, next) => {
       }
     );
   } catch (err) {
-    const error = new HttpError('Error Loggin in', 500);
+    const error = new HttpError(`Error Loggin In: ${err.message}`, 500);
     return next(error);
   }
 
