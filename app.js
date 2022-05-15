@@ -52,19 +52,24 @@ app.use((error, req, res, next) => {
   res.json({ message: error.message || 'An unknown error occurred.' });
 });
 
+let server;
+
 function runServer() {
   return new Promise((resolve, reject) => {
-    mongoose
-      .connect(DB_URL, { useNewUrlParser: true })
-      .then(() => {
-        console.log('Connected to Database successfully');
-        app.listen(PORT, () => {
-          console.log('Listening on Port 5000');
+    mongoose.connect(DB_URL, { useNewUrlParser: true }, (err) => {
+      if (err) {
+        return reject(err);
+      }
+      server = app
+        .listen(PORT, () => {
+          console.log(`Your app is listening on port ${PORT}`);
+          resolve();
+        })
+        .on('error', (err) => {
+          mongoose.disconnect();
+          reject(err);
         });
-      })
-      .catch((err) => {
-        console.log('Error connecting to database.', err);
-      });
+    });
   });
 }
 
@@ -83,6 +88,7 @@ function closeServer() {
 }
 
 if (require.main === module) {
+  console.log('MAIN === MODULE');
   runServer().catch((err) => console.error(err));
 }
 
