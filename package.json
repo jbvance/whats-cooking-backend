@@ -4,9 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon app.js",
-    "start": "node app.js"
+    "start": "node app.js",
+    "test": "jest",
+    "test:watch": "npm run test -- --watch"
   },
   "author": "",
   "license": "ISC",
@@ -25,6 +26,8 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@shelf/jest-mongodb": "^2.2.2",
+    "jest": "^28.1.0",
     "nodemon": "^1.19.4"
   }
 }
