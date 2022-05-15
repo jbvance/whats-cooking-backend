@@ -60,7 +60,7 @@ const signup = async (req, res, next) => {
 
   const createdUser = new User({
     name,
-    email,
+    email: email.toLowerCase(),
     password: hashedPassword,
     shoppingList: [],
     favorites: [],
@@ -70,7 +70,7 @@ const signup = async (req, res, next) => {
     await createdUser.save();
   } catch (err) {
     console.log(err);
-    const error = new HttpError('Error signing up', 500);
+    const error = new HttpError(`Error signing up: ${err.message}`, 500);
     return next(error);
   }
 
@@ -80,11 +80,11 @@ const signup = async (req, res, next) => {
       { userId: createdUser.id, email: createdUser.email },
       process.env.JWT_SECRET,
       {
-        expiresIn: processn.env.JWT_EXPIRY,
+        expiresIn: process.env.JWT_EXPIRY,
       }
     );
   } catch (err) {
-    const error = new HttpError('Error signing up', 500);
+    const error = new HttpError(`Error signing up: ${err.message}`, 500);
     return next(error);
   }
 
