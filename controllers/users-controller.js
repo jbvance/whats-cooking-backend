@@ -63,7 +63,7 @@ const signup = async (req, res, next) => {
     email,
     password: hashedPassword,
     shoppingList: [],
-    favorites: []
+    favorites: [],
   });
 
   try {
@@ -80,7 +80,7 @@ const signup = async (req, res, next) => {
       { userId: createdUser.id, email: createdUser.email },
       process.env.JWT_SECRET,
       {
-        expiresIn: '1h'
+        expiresIn: processn.env.JWT_EXPIRY,
       }
     );
   } catch (err) {
@@ -141,7 +141,7 @@ const login = async (req, res, next) => {
       { userId: existingUser.id, email: existingUser.email },
       process.env.JWT_SECRET,
       {
-        expiresIn: '1h'
+        expiresIn: process.env.JWT_EXPIRY,
       }
     );
   } catch (err) {
@@ -152,12 +152,12 @@ const login = async (req, res, next) => {
   res.json({
     userId: existingUser.id,
     email: existingUser.email,
-    token
+    token,
   });
 };
 
 module.exports = {
   getUsers,
   signup,
-  login
+  login,
 };
