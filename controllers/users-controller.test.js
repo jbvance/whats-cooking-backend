@@ -71,7 +71,7 @@ describe('Auth endpoints', function () {
     expect(decoded.email).toEqual('newuser@test.com');
   });
 
-  it('should return a valid auth token when logging in', async function () {
+  it('should return a valid auth token when logging user in', async function () {
     const response = await request(app)
       .post('/api/users/login')
       .send({ email, password })
