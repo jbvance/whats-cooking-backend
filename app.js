@@ -5,13 +5,14 @@ const express = require('express');
 const bodyParser = require('body-parser');
 require('dotenv').config();
 const mongoose = require('mongoose');
-const PORT = process.env.PORT || 5000;
+//const PORT = process.env.PORT || 5000;
 
 //const placesRoutes = require('./routes/places-routes');
 const usersRoutes = require('./routes/users-routes');
 const shoppingListRoutes = require('./routes/shopping-list-routes');
 const favoritesRoutes = require('./routes/favorites-routes');
 const HttpError = require('./models/http-error');
+let { PORT, DB_URL } = require('./config');
 
 const app = express();
 
@@ -51,14 +52,38 @@ app.use((error, req, res, next) => {
   res.json({ message: error.message || 'An unknown error occurred.' });
 });
 
-mongoose
-  .connect(process.env.DB_URL)
-  .then(() => {
-    console.log('Connected to Database successfully');
-    app.listen(PORT, () => {
-      console.log('Listening on Port 5000');
-    });
-  })
-  .catch((err) => {
-    console.log('Error connecting to database.', err);
+function runServer() {
+  return new Promise((resolve, reject) => {
+    mongoose
+      .connect(DB_URL, { useNewUrlParser: true })
+      .then(() => {
+        console.log('Connected to Database successfully');
+        app.listen(PORT, () => {
+          console.log('Listening on Port 5000');
+        });
+      })
+      .catch((err) => {
+        console.log('Error connecting to database.', err);
+      });
   });
+}
+
+function closeServer() {
+  return mongoose.disconnect().then(() => {
+    return new Promise((resolve, reject) => {
+      console.log('Closing server');
+      server.close((err) => {
+        if (err) {
+          return reject(err);
+        }
+        resolve();
+      });
+    });
+  });
+}
+
+if (require.main === module) {
+  runServer().catch((err) => console.error(err));
+}
+
+module.exports = { app, runServer, closeServer };

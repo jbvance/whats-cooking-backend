@@ -7,10 +7,8 @@ const userData = {
 };
 
 describe('User Model Test', () => {
-  // It's just so easy to connect to the MongoDB Memory Server
-  // By using mongoose.connect
   beforeAll(async () => {
-    await mongoose.connect(
+    mongoose.connect(
       global.__MONGO_URI__,
       { useNewUrlParser: true, useCreateIndex: true },
       (err) => {
