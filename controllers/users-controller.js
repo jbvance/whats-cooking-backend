@@ -38,7 +38,10 @@ const signup = async (req, res, next) => {
   try {
     existingUser = await User.findOne({ email });
   } catch (err) {
-    const error = new HttpError('Error searching for pre-existing user', 500);
+    const error = new HttpError(
+      `Error searching for pre-existing user: ${err.message}`,
+      500
+    );
     return next(error);
   }
 
@@ -54,7 +57,10 @@ const signup = async (req, res, next) => {
   try {
     hashedPassword = await bcrypt.hash(password, 12);
   } catch (err) {
-    const error = new HttpError('Could not create user, please try again', 500);
+    const error = new HttpError(
+      `Could not create user, please try again: ${err.message}`,
+      500
+    );
     return next(error);
   }
 
